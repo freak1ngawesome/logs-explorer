@@ -1,0 +1,11 @@
+.claude
+.agents
+node_modules
+*.plan.md
+.next
+.env*
+out
+.playwright-mcp
+opentelemetry-proto
+tsconfig.tsbuildinfo
+skills-lock.json
