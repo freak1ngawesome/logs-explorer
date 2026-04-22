@@ -1,8 +1,6 @@
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { LogsPageHeader } from "@/components/logs/LogsPageHeader";
-import { LogTable } from "@/components/logs/LogTable";
-import { LogsPageWrapper } from "@/components/shared/LogsPageWrapper";
-import { FilterBar } from "@/components/shared/FilterBar";
+import { LogsPageWrapper } from "@/components/logs/LogsPageWrapper";
 import { RetryButton } from "@/components/shared/RetryButton";
 import { transform } from "@/lib/logs/transform";
 import { computeLogStats } from "@/lib/logs/stats.util";
@@ -40,12 +38,7 @@ export default async function LogsPage() {
   return (
     <>
       <LogsPageHeader stats={stats} />
-      <LogsPageWrapper>
-        <FilterBar />
-        <div className="mt-4">
-          <LogTable records={records} />
-        </div>
-      </LogsPageWrapper>
+      <LogsPageWrapper records={records} />
     </>
   );
 }

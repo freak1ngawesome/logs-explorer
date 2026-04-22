@@ -135,7 +135,7 @@ export function LogTable({ records }: LogTableProps) {
 
   return (
     <Table>
-      <TableHeader className="sticky top-0 z-10 bg-background">
+      <TableHeader className="sticky z-10 bg-background" style={{ top: "var(--log-controls-h, 0px)" }}>
         {table.getHeaderGroups().map((headerGroup) => (
           <TableRow key={headerGroup.id}>
             {headerGroup.headers.map((header) => (

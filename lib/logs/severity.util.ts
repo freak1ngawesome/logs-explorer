@@ -45,41 +45,57 @@ export function deriveSeverityText(severityNumber: number): SeverityBand {
 
 const SEVERITY_META: Record<
   SeverityBand,
-  { textClass: string; label: string }
+  { textClass: string; label: string; color: string; order: number }
 > = {
+  UNSPECIFIED: {
+    textClass: "text-zinc-500",
+    label: "Unspecified",
+    color: "var(--color-zinc-500)",
+    order: 0,
+  },
   TRACE: {
     textClass: "text-zinc-400",
     label: "Trace",
+    color: "var(--color-zinc-400)",
+    order: 1,
   },
   DEBUG: {
     textClass: "text-blue-400",
     label: "Debug",
+    color: "var(--color-blue-400)",
+    order: 2,
   },
   INFO: {
     textClass: "text-green-400",
     label: "Info",
+    color: "var(--color-green-400)",
+    order: 3,
   },
   WARN: {
     textClass: "text-amber-400",
     label: "Warn",
+    color: "var(--color-amber-400)",
+    order: 4,
   },
   ERROR: {
     textClass: "text-red-400",
     label: "Error",
+    color: "var(--color-red-400)",
+    order: 5,
   },
   FATAL: {
     textClass: "text-red-300",
     label: "Fatal",
-  },
-  UNSPECIFIED: {
-    textClass: "text-zinc-500",
-    label: "Unspecified",
+    color: "var(--color-red-300)",
+    order: 6,
   },
 };
 
 export function getSeverityMeta(severityNumber: number): {
   textClass: string;
   label: string;
+  color: string;
+  order: number;
 } {
   const band = deriveSeverityText(severityNumber);
   return SEVERITY_META[band];
