@@ -6,7 +6,7 @@ interface SeverityPillProps {
   severityNumber: SeverityNumber;
 }
 
-export function SeverityPill({ severityNumber }: SeverityPillProps) {
+export function SeverityCell({ severityNumber }: SeverityPillProps) {
   const { textClass, label } = getSeverityMeta(severityNumber);
 
   return (

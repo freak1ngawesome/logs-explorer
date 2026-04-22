@@ -9,7 +9,7 @@ interface RowExpanderProps {
   onToggle: () => void;
 }
 
-export function RowExpander({ isExpanded, onToggle }: RowExpanderProps) {
+function RowExpander({ isExpanded, onToggle }: RowExpanderProps) {
   return (
     <Button
       variant="outline"

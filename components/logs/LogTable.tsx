@@ -17,7 +17,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { SeverityPill } from "@/components/shared/SeverityPill";
+import { SeverityCell } from "@/components/logs/cells/SeverityCell";
 import { SortableHeader } from "@/components/shared/SortableHeader";
 import { createExpanderColumn } from "@/components/shared/RowExpander";
 import { BodyCell } from "@/components/logs/cells/BodyCell";
@@ -56,7 +56,7 @@ const columns = [
       <SortableHeader<LogRecord> column={column} label="Severity" />
     ),
     cell: ({ row }) => (
-      <SeverityPill severityNumber={row.original.severityNumber} />
+      <SeverityCell severityNumber={row.original.severityNumber} />
     ),
   },
   {
