@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useMemo, useCallback, useState } from "react";
+import { Fragment } from "react";
 import {
   useReactTable,
   getCoreRowModel,
@@ -8,7 +8,6 @@ import {
   getSortedRowModel,
   flexRender,
   type ColumnDef,
-  type ExpandedState,
 } from "@tanstack/react-table";
 import {
   Table,
@@ -20,17 +19,25 @@ import {
 } from "@/components/ui/table";
 import { SeverityPill } from "@/components/shared/SeverityPill";
 import { SortableHeader } from "@/components/shared/SortableHeader";
+import { createExpanderColumn } from "@/components/shared/RowExpander";
 import { BodyCell } from "@/components/logs/cells/BodyCell";
 import { CellWrapper } from "@/components/logs/cells/CellWrapper";
 import { ResourceCell } from "@/components/logs/cells/ResourceCell";
 import { LogRowExpanded } from "@/components/logs/LogRowExpanded";
 import { formatTimestamp } from "@/lib/logs/format.util";
+import { useSingleRowExpand } from "@/hooks/use-single-row-expand";
 import { cn } from "@/lib/utils";
 import type { LogRecord } from "@/lib/logs/types";
 
-type ColumnId = "severityNumber" | "timestamp" | "resource" | "body";
+type ColumnId =
+  | "expander"
+  | "severityNumber"
+  | "timestamp"
+  | "resource"
+  | "body";
 
 const COLUMN_CLASSES: Record<ColumnId, string> = {
+  expander: "w-[40px] min-w-[40px] max-w-[40px]",
   severityNumber: "w-[120px] min-w-[120px] max-w-[120px]",
   timestamp: "w-[200px] min-w-[200px] max-w-[200px]",
   resource: "w-auto max-w-[400px] overflow-hidden",
@@ -42,9 +49,12 @@ function getCellClasses(columnId: ColumnId | string): string {
 }
 
 const columns = [
+  createExpanderColumn<LogRecord>(),
   {
     accessorKey: "severityNumber",
-    header: ({ column }) => <SortableHeader column={column} label="Severity" />,
+    header: ({ column }) => (
+      <SortableHeader<LogRecord> column={column} label="Severity" />
+    ),
     cell: ({ row }) => (
       <SeverityPill severityNumber={row.original.severityNumber} />
     ),
@@ -52,7 +62,9 @@ const columns = [
   {
     accessorKey: "timestamp",
     sortDescFirst: true,
-    header: ({ column }) => <SortableHeader column={column} label="Time" />,
+    header: ({ column }) => (
+      <SortableHeader<LogRecord> column={column} label="Time" />
+    ),
     cell: ({ row }) => (
       <span className="whitespace-nowrap">
         {formatTimestamp(row.original.timestamp)}
@@ -69,54 +81,17 @@ const columns = [
     accessorKey: "body",
     enableSorting: false,
     header: "Body",
-    cell: ({ row }) => (
-      <BodyCell
-        body={row.original.body}
-        isExpanded={row.getIsExpanded()}
-        onToggle={(e) => {
-          e.stopPropagation();
-          row.toggleExpanded();
-        }}
-      />
-    ),
+    cell: ({ row }) => <BodyCell body={row.original.body} />,
   },
-] satisfies (ColumnDef<LogRecord> & { accessorKey: ColumnId })[];
+] satisfies ColumnDef<LogRecord>[];
 
 interface LogTableProps {
   records: LogRecord[];
+  stickyHeader?: boolean;
 }
 
-export function LogTable({ records }: LogTableProps) {
-  const [expandedRowId, setExpandedRowId] = useState<string | null>(null);
-
-  const expanded: ExpandedState = useMemo(
-    () => (expandedRowId ? { [expandedRowId]: true } : {}),
-    [expandedRowId],
-  );
-
-  const onExpandedChange = useCallback(
-    (
-      updaterOrValue: ExpandedState | ((old: ExpandedState) => ExpandedState),
-    ) => {
-      const next =
-        typeof updaterOrValue === "function"
-          ? updaterOrValue(expanded)
-          : updaterOrValue;
-
-      if (
-        typeof next === "boolean" ||
-        Object.keys(next).filter((k) => next[k]).length === 0
-      ) {
-        setExpandedRowId(null);
-        return;
-      }
-
-      const expandedKeys = Object.keys(next).filter((k) => next[k]);
-      const newKey = expandedKeys.find((k) => k !== expandedRowId);
-      setExpandedRowId(newKey ?? null);
-    },
-    [expanded, expandedRowId],
-  );
+export function LogTable({ records, stickyHeader = true }: LogTableProps) {
+  const { expanded, onExpandedChange } = useSingleRowExpand();
 
   const table = useReactTable({
     data: records,
@@ -135,7 +110,10 @@ export function LogTable({ records }: LogTableProps) {
 
   return (
     <Table>
-      <TableHeader className="sticky z-10 bg-background" style={{ top: "var(--log-controls-h, 0px)" }}>
+      <TableHeader
+        className={cn("bg-background", stickyHeader && "sticky z-10")}
+        style={stickyHeader ? { top: "var(--log-controls-h, 0px)" } : undefined}
+      >
         {table.getHeaderGroups().map((headerGroup) => (
           <TableRow key={headerGroup.id}>
             {headerGroup.headers.map((header) => (
@@ -160,7 +138,7 @@ export function LogTable({ records }: LogTableProps) {
           table.getRowModel().rows.map((row) => (
             <Fragment key={row.id}>
               <TableRow
-                className="cursor-pointer"
+                className={cn("cursor-pointer")}
                 onClick={() => row.toggleExpanded()}
               >
                 {row.getVisibleCells().map((cell) => (

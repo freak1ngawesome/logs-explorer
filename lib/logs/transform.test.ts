@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { transform } from "./transform";
+import { transformIntoLogRecords } from "./transform";
 import type { ExportLogsServiceRequest, KeyValue } from "../otlp-types";
 
 // proto types timeUnixNano as number, but values are nanosecond strings at runtime
@@ -68,7 +68,7 @@ function createMockRecord(opts: SingleOpts = {}): ExportLogsServiceRequest {
 describe("transform", () => {
   describe("main case — full result", () => {
     it("maps a complete log record to the full LogRecord shape", () => {
-      const result = transform(
+      const result = transformIntoLogRecords(
         createMockRecord({
           resourceAttrs: [
             { key: "service.name", value: { stringValue: "api" } },
@@ -109,11 +109,11 @@ describe("transform", () => {
 
   describe("corner cases", () => {
     it("returns [] for empty payload", () => {
-      expect(transform({ resourceLogs: [] })).toEqual([]);
+      expect(transformIntoLogRecords({ resourceLogs: [] })).toEqual([]);
     });
 
     it("skips droppedAttributesCount key in resource attrs", () => {
-      const [record] = transform(
+      const [record] = transformIntoLogRecords(
         createMockRecord({
           resourceAttrs: [
             { key: "droppedAttributesCount", value: { intValue: 5 } },
@@ -126,7 +126,7 @@ describe("transform", () => {
     });
 
     it("falls back to observedTimeUnixNano when timeUnixNano is 0", () => {
-      const [record] = transform(
+      const [record] = transformIntoLogRecords(
         createMockRecord({
           timeUnixNano: 0,
           observedTimeUnixNano: ns("1705160354264000000"),
@@ -136,7 +136,7 @@ describe("transform", () => {
     });
 
     it("log attr with key resource.X overrides resource attr X", () => {
-      const [record] = transform(
+      const [record] = transformIntoLogRecords(
         createMockRecord({
           resourceAttrs: [
             { key: "service.name", value: { stringValue: "original" } },

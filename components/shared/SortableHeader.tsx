@@ -2,14 +2,13 @@
 
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 import type { Column } from "@tanstack/react-table";
-import type { LogRecord } from "@/lib/logs/types";
 
-interface SortableHeaderProps {
-  column: Column<LogRecord>;
+interface SortableHeaderProps<T> {
+  column: Column<T>;
   label: string;
 }
 
-export function SortableHeader({ column, label }: SortableHeaderProps) {
+export function SortableHeader<T>({ column, label }: SortableHeaderProps<T>) {
   const sorted = column.getIsSorted();
   const Icon =
     sorted === false ? ArrowUpDown : sorted === "desc" ? ArrowDown : ArrowUp;
