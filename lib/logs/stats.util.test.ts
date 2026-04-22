@@ -40,17 +40,6 @@ describe("computeLogStats", () => {
     expect(stats.displayed).toBe(2);
   });
 
-  it("uses totals from endpoint when provided", () => {
-    const records = [makeRecord(9)];
-    const totals = { total: 100, warn: 10, error: 5, fatal: 2 };
-    const stats = computeLogStats(records, totals);
-    expect(stats.total).toBe(100);
-    expect(stats.displayed).toBe(1);
-    expect(stats.warn).toBe(10);
-    expect(stats.error).toBe(5);
-    expect(stats.fatal).toBe(2);
-  });
-
   it("handles empty array", () => {
     const stats = computeLogStats([]);
     expect(stats.total).toBe(0);

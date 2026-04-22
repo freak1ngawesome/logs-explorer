@@ -18,19 +18,8 @@ export interface LogStats {
 
 export function computeLogStats(
   displayed: LogRecord[],
-  totals?: TotalsFromEndpoint,
 ): LogStats {
   const displayedCount = displayed.length;
-
-  if (totals) {
-    return {
-      total: totals.total,
-      displayed: displayedCount,
-      warn: totals.warn,
-      error: totals.error,
-      fatal: totals.fatal,
-    };
-  }
 
   let warn = 0;
   let error = 0;

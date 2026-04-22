@@ -44,7 +44,7 @@ function buildLogAttrs(lr: OtlpLogRecord): Record<string, string> {
   };
 }
 
-export function transform(payload: ExportLogsServiceRequest): LogRecord[] {
+export function transformIntoLogRecords(payload: ExportLogsServiceRequest): LogRecord[] {
   return payload.resourceLogs.flatMap((rl, ri) => {
     const resourceAttrs = buildResourceAttrs(rl);
     return rl.scopeLogs.flatMap((sl, si) => {

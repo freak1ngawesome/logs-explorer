@@ -19,7 +19,7 @@ export function LogTableSkeleton() {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {Array.from({ length: 3 }).map((_, i) => (
+        {Array.from({ length: 8 }).map((_, i) => (
           <TableRow key={i}>
             <TableCell>
               <Skeleton className="h-5 w-[5.5rem] rounded-full" />

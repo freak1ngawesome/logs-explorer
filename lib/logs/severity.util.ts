@@ -43,7 +43,7 @@ export function deriveSeverityText(severityNumber: number): SeverityBand {
   return "UNSPECIFIED";
 }
 
-const SEVERITY_META: Record<
+export const SEVERITY_META: Record<
   SeverityBand,
   { textClass: string; label: string; color: string; order: number }
 > = {

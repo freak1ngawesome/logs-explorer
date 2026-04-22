@@ -4,6 +4,7 @@ import { Geist_Mono } from "next/font/google";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AppSidebar } from "@/components/shared/AppSidebar";
+import { QueryProvider } from "@/providers/QueryProvider";
 import "./globals.css";
 
 const roboto = Roboto({
@@ -33,14 +34,16 @@ export default function RootLayout({
       className={`dark ${roboto.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className={`flex h-full ${roboto.className}`}>
-        <TooltipProvider>
-          <SidebarProvider defaultOpen={false}>
-            <AppSidebar />
-            <main className="flex flex-1 flex-col overflow-hidden">
-              {children}
-            </main>
-          </SidebarProvider>
-        </TooltipProvider>
+        <QueryProvider>
+          <TooltipProvider>
+            <SidebarProvider defaultOpen={false}>
+              <AppSidebar />
+              <main className="flex flex-1 flex-col overflow-hidden">
+                {children}
+              </main>
+            </SidebarProvider>
+          </TooltipProvider>
+        </QueryProvider>
       </body>
     </html>
   );

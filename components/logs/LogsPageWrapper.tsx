@@ -1,16 +1,13 @@
 "use client";
 
 import { useRef, useLayoutEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { FilterBar } from "@/components/shared/FilterBar";
 import { LogHistogram } from "@/components/logs/histogram";
 import { LogTable } from "@/components/logs/LogTable";
-import type { LogRecord } from "@/lib/logs/types";
+import { logsQueryOptions } from "@/lib/logs/queries";
 
-interface LogsPageWrapperProps {
-  records: LogRecord[];
-}
-
-export function LogsPageWrapper({ records }: LogsPageWrapperProps) {
+export function LogsPageWrapper() {
   const controlsRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
@@ -22,13 +19,17 @@ export function LogsPageWrapper({ records }: LogsPageWrapperProps) {
     }
   });
 
+  const { data } = useQuery(logsQueryOptions);
+
+  if (!data) return null;
+
   return (
     <div className="flex-1 overflow-auto">
       <div ref={controlsRef} className="sticky top-0 z-30 bg-background p-1">
         <FilterBar />
-        <LogHistogram records={records} />
+        <LogHistogram records={data.records} />
       </div>
-      <LogTable records={records} />
+      <LogTable records={data.records} />
     </div>
   );
 }
